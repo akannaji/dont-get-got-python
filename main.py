@@ -142,6 +142,7 @@ while True:
             block = Block()
             all_sprites.add(block)
             blocks.add(block)
+            score += 500
 
         block_hits = pygame.sprite.spritecollide(player, blocks, False)
         if block_hits:

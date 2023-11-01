@@ -1,6 +1,6 @@
-# Avoid the Blocks! Game
+# Don't Get Got! Game
 
-**Avoid the Blocks!** is a simple game where the player controls a blue square aiming to dodge the falling red blocks. Survive as long as you can!
+**Don't Get Got!** is a simple game where the player controls a blue square aiming to dodge the falling red blocks. Survive as long as you can!
 
 ## How to Run
 

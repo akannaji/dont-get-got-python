@@ -13,7 +13,7 @@ BLACK = (0, 0, 0)
 # Screen dimensions
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Avoid the Blocks!")
+pygame.display.set_caption("Don't Get Got!")
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -40,6 +40,21 @@ class Player(pygame.sprite.Sprite):
 
     def stop(self):
         self.change_x = 0
+
+class Missile(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.Surface([5, 10])
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.rect.x = x + 22  # roughly center the missile based on the player's width
+        self.rect.y = y
+        self.speed = -5
+
+    def update(self):
+        self.rect.y += self.speed
+        if self.rect.y < 0:  # if missile goes off-screen
+            self.kill()  # remove missile
 
 class Block(pygame.sprite.Sprite):
     def __init__(self):
@@ -89,6 +104,8 @@ while True:
     all_sprites.add(player)
 
     blocks = pygame.sprite.Group()
+    missiles = pygame.sprite.Group()
+
     for i in range(5):
         block = Block()
         all_sprites.add(block)
@@ -108,11 +125,23 @@ while True:
                     player.go_left()
                 elif event.key == pygame.K_RIGHT:
                     player.go_right()
+                elif event.key == pygame.K_SPACE:  # shooting missile
+                    missile = Missile(player.rect.x, player.rect.y)
+                    all_sprites.add(missile)
+                    missiles.add(missile)
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     player.stop()
 
         all_sprites.update()
+
+        # Check for missile-block collisions
+        missile_hits = pygame.sprite.groupcollide(missiles, blocks, True, True)
+
+        for hit in missile_hits:  # for each hit, spawn a new block
+            block = Block()
+            all_sprites.add(block)
+            blocks.add(block)
 
         block_hits = pygame.sprite.spritecollide(player, blocks, False)
         if block_hits:
@@ -127,7 +156,7 @@ while True:
 
         pygame.display.flip()
         clock.tick(60)
-    
+
     # After the inner game loop finishes (i.e., player collides), prompt for retry
     if not display_game_over():
         break
